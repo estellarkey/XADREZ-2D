@@ -1,3 +1,4 @@
+@import 'tailwindcss';
 
 :root {
     --secondary-color: #1c0a0359;
@@ -5,8 +6,8 @@
     --accent-color: #331e00;
     --light-color: #f5f5f5;
     --dark-color: #311d06;
-    --board-light: url('../assets/images/madeiraclara.jpg');
-    --board-dark: url('../assets/images/madeiraescura.jpg');
+    --board-light: url('/assets/images/madeiraclara.jpg');
+    --board-dark: url('/assets/images/madeiraescura.jpg');
   }
   
   body {
@@ -19,7 +20,7 @@
     align-items: center;
       background: 
         linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), /* Camada escura */
-        url('../assets/images/madeiraescura.jpg');
+        url('/assets/images/madeiraescura.jpg');
    
     color: var(--light-color);
   }
@@ -37,13 +38,13 @@
   }
   
   .chess-square.light {
-    background: url('../assets/images/madeiraclara.jpg');
+    background: url('/assets/images/madeiraclara.jpg');
   }
   
   .chess-square.dark {
     background: 
     linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), /* Camada escura */
-    url('../assets/images/madeiraescura.jpg');
+    url('/assets/images/madeiraescura.jpg');
   }
   .game-wrapper {
     display: flex;
