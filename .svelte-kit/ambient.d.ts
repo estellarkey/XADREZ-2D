@@ -72,6 +72,7 @@ declare module '$env/static/private' {
 	export const COLOR: string;
 	export const NVM_DIR: string;
 	export const WAYLAND_DISPLAY: string;
+	export const FORCE_COLOR: string;
 	export const LOGNAME: string;
 	export const JOURNAL_STREAM: string;
 	export const _: string;
@@ -140,6 +141,7 @@ declare module '$env/static/private' {
 	export const LOCAL_GIT_DIRECTORY: string;
 	export const INIT_CWD: string;
 	export const EDITOR: string;
+	export const NODE_ENV: string;
 }
 
 /**
@@ -217,6 +219,7 @@ declare module '$env/dynamic/private' {
 		COLOR: string;
 		NVM_DIR: string;
 		WAYLAND_DISPLAY: string;
+		FORCE_COLOR: string;
 		LOGNAME: string;
 		JOURNAL_STREAM: string;
 		_: string;
@@ -285,6 +288,7 @@ declare module '$env/dynamic/private' {
 		LOCAL_GIT_DIRECTORY: string;
 		INIT_CWD: string;
 		EDITOR: string;
+		NODE_ENV: string;
 		[key: `PUBLIC_${string}`]: undefined;
 		[key: `${string}`]: string | undefined;
 	}

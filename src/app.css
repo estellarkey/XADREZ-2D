@@ -263,7 +263,33 @@
     border-bottom: 1px solid var(--accent-color);
     padding-bottom: 5px;
   }
-  
+
+  #game-mode {
+    margin-bottom: 10px;
+    background: rgba(255, 242, 217, 0.9);
+    color: var(--secondary-color);
+    border-radius: 4px;
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  #bot-level {
+    margin-bottom: 10px;
+    background: rgba(255, 242, 217, 0.9);
+    color: var(--secondary-color);
+    border-radius: 4px;
+    padding: 8px;
+    font-size: 14px;
+  }
+
+  #player-color {
+    margin-bottom: 10px;
+    background: rgba(255, 242, 217, 0.9);
+    color: var(--secondary-color);
+    border-radius: 4px;
+    padding: 8px;
+    font-size: 14px;
+  }
   .game-controls select, .game-controls input {
     width: 100%;
     padding: 8px 12px;
