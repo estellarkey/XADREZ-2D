@@ -1,470 +1,864 @@
-@import 'tailwindcss';
-
+/* Variáveis de cores */
 :root {
-    --secondary-color: #1c0a0359;
-    --primary-color: #e8d9c5;
-    --accent-color: #331e00;
-    --light-color: #f5f5f5;
-    --dark-color: #311d06;
-    --board-light: url('/assets/images/madeiraclara.jpg');
-    --board-dark: url('/assets/images/madeiraescura.jpg');
-  }
-  
-  body {
+    --dark-square: url('/assets/images/madeira-escura.png');
+    --light-square: url('/assets/images/madeiraclara.jpg');
+    --highlight-color: #bcaaa4;
+    --text-dark: #3e2723;
+    --text-light: #efebe9;
+    --bg-color: url('/assets/images/madeira-escura.png');
+    --panel-bg: #1c0a0359;
+    --accent-color: #d7ccc8;
+}
+
+/* Reset e estilos base */
+* {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    min-height: 100vh;
+    scrollbar-width: thin;
+    scrollbar-color: var(--highlight-color) transparent;
+}
+
+*:focus {
+    outline: none;
+}
+
+body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-image: var(--bg-color);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: var(--text-light);
+    overflow-x: hidden;
+    line-height: 1.5;
+
+}
+
+/* Layout principal */
+.chess-app {
     display: flex;
     justify-content: center;
-    align-items: center;
-      background: 
-        linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), /* Camada escura */
-        url('/assets/images/madeiraescura.jpg');
-   
-    color: var(--light-color);
-  }
-  
-  .chess-square {
-    width: 70px;
-    height: 70px;
-    padding: 0;
-    text-align: center;
-    vertical-align: middle;
-    position: relative;
-    background-size: cover !important;
-    background-repeat: no-repeat !important;
-    background-position: center !important;
-  }
-  
-  .chess-square.light {
-    background: url('/assets/images/madeiraclara.jpg');
-  }
-  
-  .chess-square.dark {
-    background: 
-    linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), /* Camada escura */
-    url('/assets/images/madeiraescura.jpg');
-  }
-  .game-wrapper {
-    display: flex;
-    background: rgba(15, 9, 0, 0.458);
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    overflow: hidden;
-    width: 95%;
-    max-width: 1400px;
-    min-height: 700px;
-    position: relative;
-    border: 1px solid var(--accent-color);
-  }
-  
-  .game-container {
+    align-items: flex-start;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.chess-main-container {
     display: flex;
     width: 100%;
-    padding: 20px;
+    max-width: 900px;
+    max-height: 90vh;
+    overflow: hidden;
+}
+
+.chess-content-wrapper {
+    display: flex;
+    flex-direction: row;
     gap: 20px;
-  }
-  
-  /* Painel do Histórico de Movimentos */
-  .history-panel {
-    width: 250px;
-    background: var(--secondary-color);
-    border-radius: 10px;
-    padding: 15px;
+    padding: 20px;
+    width: 100%;
+}
+
+.board-with-coordinates {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+    width: 100%;
+    justify-content: center;
+}
+
+.vertical-coordinates {
     display: flex;
     flex-direction: column;
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.466);
-    border: 1px solid var(--accent-color);
-  }
-  
-  .history-panel h3 {
-    text-align: center;
-    margin: 0 0 15px 0;
-    padding-bottom: 10px;
-    border-bottom: 2px solid var(--accent-color);
-    color: var(--light-color);
-    font-size: 1.2rem;
-  }
-  
-  #moves-list {
-    flex-grow: 1;
-    overflow-y: auto;
-    padding-right: 5px;
-  }
-  
-  .move-entry {
-    display: flex;
-    margin-bottom: 5px;
-    padding: 8px;
-    border-radius: 5px;
-    background: rgba(212, 167, 106, 0.1);
-    transition: background 0.2s;
-  }
-  
-  .move-entry:hover {
-    background: rgba(212, 167, 106, 0.2);
-  }
-  
-  .move-number {
-    color: var(--accent-color);
+    align-items: center;
+    justify-content: space-around;
+    height: 480px;
     margin-right: 10px;
+    font-size: 0.9rem;
+    color: var(--accent-color);
     font-weight: bold;
-    min-width: 30px;
-  }
-  
-  .white-move, .black-move {
-    padding: 0 10px;
-    border-radius: 3px;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  
-  .white-move {
-    background: rgba(232, 217, 197, 0.9);
-    color: var(--secondary-color);
-    margin-right: 5px;
-  }
-  
-  .black-move {
-    background: rgba(58, 44, 26, 0.9);
-    color: var(--primary-color);
-  }
-  
-  .hidden-moves {
-    text-align: center;
-    color: #666;
-    font-style: italic;
-    padding: 5px;
-    font-size: 0.9em;
-  }
-  
-  /* Barra de rolagem personalizada */
-  #moves-list::-webkit-scrollbar {
-    width: 8px;
-    height: 50px;
-  }
-  
-  #moves-list::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
-  }
-  
-  #moves-list::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 4px;
-  }
-  
-  #moves-list::-webkit-scrollbar-thumb:hover {
-    background: #555;
-  }
-  
-  /* Tabuleiro */
-  .board-container {
-    flex-grow: 1;
+}
+
+.horizontal-coordinates {
+    display: flex;
+    justify-content: space-between;
+    width: 480px;
+    padding-left: 40px;
+    padding-right: 2px;
+    font-size: 0.9rem;
+    color: var(--accent-color);
+    font-weight: bold;
+    box-sizing: border-box;
+}
+
+.board-wrapper {
     display: flex;
     justify-content: center;
-    align-items: center;
+}
+
+/* Tabuleiro e peças */
+#tabuleiro {
+    border-collapse: collapse;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+#tabuleiro td {
+    width: 60px;
+    height: 60px;
     position: relative;
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.466);
-    border-radius: 20px;
-  }
-  
-  #tabuleiro {
-    border-spacing: 0;
-    border-radius: 10px;
-    border-collapse: separate;
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.466);
-    overflow: hidden;
-  }
-  
-  #tabuleiro td {
-    width: 70px;
-    height: 70px;
-    padding: 0;
-    text-align: center;
-    vertical-align: middle;
-    position: relative;
+    transition: background-color 0.2s;
+}
+
+#tabuleiro td.light {
+    background-image: var(--light-square);
     background-size: cover;
-  }
-  
-  #tabuleiro td.light {
-    background-image: var(--board-light);
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+#tabuleiro td.dark {
+    background-image: var(--dark-square);
     background-size: cover;
-  }
-  
-  #tabuleiro td.dark {
-    background-image: var(--board-dark);
-    background-size: cover;
-  }
-  
-  #tabuleiro td.selected {
-    background-color: rgba(231, 76, 60, 0.5) !important;
-  }
-  
-  td svg {
+    background-position: center;
+    background-repeat: no-repeat;
+
+}
+
+#tabuleiro td.highlight {
+    background-color: transparent !important;
+}
+
+td svg {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) scale(2.3);
-    width: 50px;
-    height: 50px;
+    transform: translate(-50%, -50%) scale(2.0);
+    width: 45px;
+    height: 45px;
     pointer-events: none;
-    filter: drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.3));
-    fill: #1d0000 !important; /* Para SVGs */
-  }
-  
-  .marcador-valido {
+    transition: transform 0.2s;
+}
+
+.valid-move-marker {
     position: absolute;
-    width: 25px;
-    height: 25px;
-    background-color: rgba(103, 103, 103, 0.5);
+    width: 20px;
+    height: 20px;
+    background-color: rgba(255, 255, 255, 0.3);
     border-radius: 50%;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     pointer-events: none;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-  }
-  
-  .marcador-valido.capture {
-    width: 60px;
-    height: 60px;
-    background-color: transparent;
-    border: 3px solid rgba(231, 76, 60, 0.7);
-    border-radius: 50%;
-  }
-  
-  /* Painel de Controles */
-  .control-panel {
-    width: 250px;
-    background: var(--secondary-color);
-    border-radius: 10px;
-    padding: 15px;
+}
+
+.chess-board-area {
+    background-color: var(--panel-bg);
+    border-radius: 8px;
+    padding: 5px;
+    padding-right: 25px;
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.367);
-    border: 1px solid var(--accent-color);
-  }
-  
-  .control-group {
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 8px;
-    padding: 12px;
-    border: 1px solid rgba(212, 167, 106, 0.3);
-  }
-  
-  .control-group h4 {
-    margin-top: 0;
-    margin-bottom: 10px;
-    color: var(--light-color);
-    font-size: 1rem;
-    border-bottom: 1px solid var(--accent-color);
-    padding-bottom: 5px;
-  }
+    align-items: center;
+    max-width: fit-content;
+    margin: 0 auto;
+}
 
-  #game-mode {
-    margin-bottom: 10px;
-    background: rgba(255, 242, 217, 0.9);
-    color: var(--secondary-color);
-    border-radius: 4px;
-    padding: 8px;
-    font-size: 14px;
-  }
 
-  #bot-level {
-    margin-bottom: 10px;
-    background: rgba(255, 242, 217, 0.9);
-    color: var(--secondary-color);
-    border-radius: 4px;
-    padding: 8px;
-    font-size: 14px;
-  }
 
-  #player-color {
-    margin-bottom: 10px;
-    background: rgba(255, 242, 217, 0.9);
-    color: var(--secondary-color);
-    border-radius: 4px;
-    padding: 8px;
-    font-size: 14px;
-  }
-  .game-controls select, .game-controls input {
+
+/* Lista de movimentos */
+
+.chess-board-area2 {
     width: 100%;
-    padding: 8px 12px;
-    margin-bottom: 10px;
-    border: none;
-    border-radius: 4px;
-    background: rgba(232, 217, 197, 0.9);
-    font-size: 14px;
-    color: var(--secondary-color);
-  }
-  
-  .game-controls button {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 8px;
-    border: none;
-    border-radius: 4px;
-    background: var(--accent-color);
-    color: var(--secondary-color);
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  
-  .game-controls button:hover {
-    background: #b58a4a;
-    transform: translateY(-2px);
-  }
-  
-  .game-controls button:active {
-    transform: translateY(0);
-  }
-  
-  .game-controls button.secondary {
-    background: #8c7b65;
-    color: var(--primary-color);
-  }
-  
-  .game-controls button.secondary:hover {
-    background: #6b5d4d;
-  }
-  
-  .move-buttons {
     display: flex;
+    justify-content: flex-start;
+    margin: 0;
+    padding: 0;
+}
+
+.moves-container {
+    width: 100%;
+    max-width: 480px;
+    background-color: transparent;
+
+}
+
+.moves-scroll-wrapper {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+    overflow-x: auto;
+    padding-bottom: 1px;
+    direction: ltr;
+    text-align: left;
+}
+
+.moves-list-horizontal {
+    display: inline-flex;
     gap: 8px;
-  }
-  
-  .move-buttons button {
-    flex: 1;
-  }
-  
-  #online-status {
-    padding: 8px;
-    border-radius: 4px;
-    text-align: center;
-    margin-top: 10px;
-    font-size: 0.9rem;
-    background: rgba(212, 167, 106, 0.2);
-    color: var(--light-color);
-  }
-  
-  /* Status do Jogo */
-  .game-status {
-    position: absolute;
-    top: 10px;
-    left: 0;
-    right: 0;
-    text-align: center;
-    font-size: 1.5rem;
+    min-height: 24px;
+    justify-content: flex-start;
+}
+
+
+
+.move-entry {
+    display: inline-flex;
+    background-color: transparent !important;
+    border-radius: 3px;
+    padding: 2px 6px;
+    font-size: 0.8rem;
+    color: var(--text-light);
+    align-items: center;
+    transition: all 0.2s;
+}
+
+.move-number {
+    color: var(--accent-color);
+    margin-right: 4px;
     font-weight: bold;
-    color: var(--light-color);
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-  }
-  
-  /* Scrollbar personalizada */
-  ::-webkit-scrollbar {
-    width: 8px;
-  }
-  
-  ::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 4px;
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    background: var(--accent-color);
-    border-radius: 4px;
-  }
-  
-  .peca-branca {
-    filter: 
-        drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.3))
-        sepia(30%) 
-        hue-rotate(-5deg) 
-        saturate(120%) 
-        brightness(110%);
-  }
-  
-  .peca-preta {
-    filter: 
-        drop-shadow(2px 2px 3px rgba(0, 0, 0, 0.3))
-        sepia(60%) 
-        hue-rotate(5deg) 
-        saturate(140%) 
-        brightness(70%)
-        contrast(120%);
-  }
-  
-  
-  button {
-    background-color: #d2b48c; /* Cor bege mais escura para botões */
-    color: #333;
-    border: none;
-    padding: 10px 15px;
-    margin: 5px 0;
-    border-radius: 5px;
-    cursor: pointer;
+    font-size: 0.75rem;
+}
+
+.white-move,
+.black-move {
+    padding: 1px 6px;
+    border-radius: 2px;
+    margin-right: 0;
     font-weight: 500;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  }
-  
-  button:hover {
-    background-color: #c0a080; /* Tom mais escuro no hover */
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  }
-  
-  button:active {
-    transform: translateY(0);
-  }
-  
-  button.secondary {
-    background-color: #e6d5b8; /* Bege mais claro para botões secundários */
-    color: #555;
-  }
-  
-  button.secondary:hover {
-    background-color: #d8c9a8;
-  }
-  
-  
-  /* Inputs e selects */
-  select, input {
+    font-size: 0.8rem;
+}
+
+.white-move {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-light);
+}
+
+.black-move {
+    background-color: rgba(0, 0, 0, 0.1);
+    color: var(--accent-color);
+}
+
+
+.chess-controls {
+    width: 200px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow-y: auto;
+}
+
+.control-group {
+    margin-bottom: 0;
+}
+
+.control-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    color: var(--highlight-color);
+}
+
+.control-group select {
     width: 100%;
     padding: 8px 10px;
-    margin: 5px 0 10px;
-    border: 1px solid #d2b48c;
+    font-size: 0.9rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-light);
     border-radius: 4px;
-    background-color: #fff;
-  }
-  
-  select:focus, input:focus {
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.control-group select:hover {
+    border-color: var(--highlight-color);
+}
+
+.control-group select:focus {
     outline: none;
-    border-color: #8b7355;
-    box-shadow: 0 0 0 2px rgba(139, 115, 85, 0.2);
-  }
-  
-  /* Responsividade */
-  @media (max-width: 1200px) {
-    .game-wrapper {
-        flex-direction: column;
+    border-color: var(--highlight-color);
+    box-shadow: 0 0 0 2px rgba(188, 170, 164, 0.3);
+}
+
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.move-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.chess-btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.chess-btn.primary {
+    background-color: var(--dark-square);
+    color: var(--text-light);
+    font-weight: 500;
+}
+
+.chess-btn.secondary {
+    background-color: transparent;
+    color: var(--text-light);
+    border: 1px solid var(--highlight-color);
+}
+
+.chess-btn.small {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+}
+
+.chess-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.chess-btn:active {
+    transform: translateY(0);
+}
+
+.game-status {
+    text-align: center;
+    font-weight: bold;
+    margin-top: 10px;
+    padding: 8px;
+    border-radius: 4px;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.danger-zone {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.danger-zone::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 2px;
+    pointer-events: none;
+}
+
+/* Zona de perigo em casa vazia */
+.danger-empty::before {
+    background-color: rgba(255, 50, 50, calc(0.3 * var(--danger-intensity)));
+    animation: danger-pulse 2s infinite;
+}
+
+/* Zona de perigo em casa com peça */
+.danger-with-piece::before {
+    box-shadow: inset 0 0 15px rgba(255, 0, 0, calc(0.7 * var(--danger-intensity)));
+    animation: danger-pulse-fast 1s infinite;
+}
+
+/* Nova zona de perigo (primeiros 2 segundos) */
+.new-danger-zone::before {
+    animation: danger-pulse-flash 0.5s infinite;
+}
+
+.chess-square {
+    position: relative;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.dark {
+    background-color: #b58863;
+}
+
+.light {
+    background-color: #f0d9b5;
+}
+
+@keyframes danger-pulse {
+    0% {
+        opacity: 0.3;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+
+    100% {
+        opacity: 0.3;
+    }
+}
+
+@keyframes danger-pulse-fast {
+    0% {
+        opacity: 0.5;
+    }
+
+    50% {
+        opacity: 0.9;
+    }
+
+    100% {
+        opacity: 0.5;
+    }
+}
+
+@keyframes danger-pulse-flash {
+    0% {
+        opacity: 0.8;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.8;
+    }
+}
+
+
+.robot {
+    position: absolute;
+    top: 80px;
+    left: 150px;
+    width: 200px;
+    height: 220px;
+    background-image: url('/assets/images/madeiraclara.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 50% 50% 40% 40%;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.face {
+    position: absolute;
+    top: 35px;
+    left: 15px;
+    width: 170px;
+    height: 100px;
+    background: url('/assets/images/madeira-escura.png');
+    border-radius: 45% / 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.eyes {
+    display: flex;
+    gap: 40px;
+}
+
+.eye {
+    width: 20px;
+    height: 20px;
+    background-image: url('/assets/images/madeiraclara.jpg');
+    border-radius: 50%;
+    animation: blink 4s infinite;
+}
+
+@keyframes blink {
+
+    0%,
+    90%,
+    100% {
+        transform: scaleY(1);
+    }
+
+    93%,
+    97% {
+        transform: scaleY(0.1);
+    }
+}
+
+.mouth {
+    margin-top: 10px;
+    width: 50px;
+    height: 10px;
+    border-radius: 10px;
+    background-image: url('/assets/images/madeiraclara.jpg');
+}
+
+.body {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 140px;
+    height: 80px;
+    background: url('/assets/images/madeira-escura.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 40% / 50%;
+    z-index: -1;
+}
+
+.arms {
+    position: absolute;
+    width: 240px;
+    height: 100px;
+    top: 90px;
+    left: -20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.arm {
+    width: 50px;
+    height: 80px;
+    background: url('/assets/images/madeira-escura.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 40%;
+}
+
+.arm.right {
+    transform-origin: top right;
+    animation: wave 2s ease-out 1;
+}
+
+@keyframes wave {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    20% {
+        transform: rotate(-30deg);
+    }
+
+    40% {
+        transform: rotate(10deg);
+    }
+
+    60% {
+        transform: rotate(-20deg);
+    }
+
+    80% {
+        transform: rotate(5deg);
+    }
+
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+.shadow {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 20px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    filter: blur(2px);
+    animation: shadowPulse 3s ease-in-out infinite;
+}
+
+@keyframes shadowPulse {
+
+    0%,
+    100% {
+        transform: translateX(-50%) scale(1);
+    }
+
+    50% {
+        transform: translateX(-50%) scale(1.1);
+    }
+}
+
+/* Novo estilo para o balão de pensamento */
+.thought-bubble {
+    position: absolute;
+    top: -60px;
+    left: 200px;
+    width: 200px;
+    padding: 15px;
+    background: url('/assets/images/madeiraclara.jpg');
+    border-radius: 30px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    animation: fadeInOut 8s infinite;
+}
+
+
+
+@keyframes fadeInOut {
+
+    0%,
+    100% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    10%,
+    90% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.thought-text {
+    font-size: 14px;
+    color: #333;
+    text-align: center;
+}
+
+
+.disco-container {
+    position: absolute;
+    left: 1100px;
+    top: 360px;
+    width: 400px;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.disco {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: url('/assets/images/madeira-escura.png');
+    position: relative;
+    cursor: pointer;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    transition: transform 0.3s ease-out;
+    transform: rotate(0deg);
+}
+
+.disco::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background:
+        radial-gradient(circle at center, transparent 60%, rgba(0, 0, 0, 0.7) 100%),
+        repeating-radial-gradient(circle at center,
+            rgba(255, 255, 255, 0.1) 0%,
+            rgba(255, 255, 255, 0) 10%);
+    background-size: 100% 100%, 10px 10px;
+}
+
+.disco-centro {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: url('/assets/images/madeiraclara.jpg');
+    position: absolute;
+    z-index: 2;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.disco-linha {
+    position: absolute;
+    width: 2px;
+    height: 140px;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.1));
+    top: 10px;
+    transform-origin: bottom center;
+}
+
+.disco-rotulo {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 10px;
+    color: #333;
+    text-align: center;
+    padding: 5px;
+    box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.info {
+    margin-top: 30px;
+    text-align: center;
+    width: 100%;
+}
+
+.titulo {
+    font-weight: bold;
+    font-size: 10px;
+    margin-bottom: 5px;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.indicador {
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+}
+
+.indicador::before {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 15px solid rgba(255, 224, 220, 0.8);
+    top: 0;
+    left: 5px;
+}
+
+.indicador::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 20px;
+    background:url('/assets/images/madeiraclara.jpg');
+    top: 15px;
+    left: 10px;
+    border-radius: 5px 5px 0 0;
+}
+
+/* Barra de rolagem personalizada */
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: var(--highlight-color);
+    border-radius: 2px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--highlight-color);
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .chess-main-container {
+        max-height: none;
         height: auto;
-    }
-  
-    .game-container {
         flex-direction: column;
     }
-  
-    .history-panel, .control-panel {
-        width: auto;
+
+    .chess-content-wrapper {
+        flex-direction: column;
     }
-  
+
+    .chess-controls {
+        width: 100%;
+        order: -1;
+        padding: 15px;
+    }
+
+    .chess-board-area {
+        padding: 15px;
+    }
+
     #tabuleiro td {
-        width: 50px;
-        height: 50px;
+        width: 45px;
+        height: 45px;
     }
-  }
+
+    td svg {
+        transform: translate(-50%, -50%) scale(1.8);
+        width: 40px;
+        height: 40px;
+    }
+
+    .vertical-coordinates {
+        height: 360px;
+        font-size: 0.8rem;
+    }
+
+    .horizontal-coordinates {
+        width: 360px;
+        font-size: 0.8rem;
+    }
+
+    .action-buttons {
+        flex-direction: row;
+    }
+
+    .chess-btn {
+        flex-grow: 1;
+    }
+}
+
+@media (max-width: 480px) {
+    #tabuleiro td {
+        width: 40px;
+        height: 40px;
+    }
+
+    td svg {
+        transform: translate(-50%, -50%) scale(1.6);
+        width: 35px;
+        height: 35px;
+    }
+
+    .vertical-coordinates {
+        height: 320px;
+    }
+
+    .horizontal-coordinates {
+        width: 320px;
+    }
+}

@@ -4,7 +4,7 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
-		    "dev": "concurrently \"vite\" \"node server.js\"",
+		"dev": "vite dev",
 		"build": "vite build",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
@@ -42,6 +42,7 @@
 	"dependencies": {
 		"chess": "^1.2.2",
 		"chess.js": "^1.2.0",
+		"gsap": "^3.13.0",
 		"ws": "^8.18.2"
 	}
 }
