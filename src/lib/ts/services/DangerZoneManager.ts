@@ -3,38 +3,36 @@ import { AudioService } from '../services/AudioService';
 import type { CellPosition } from '../models/types/ChessTypes';
 
 export class DangerZoneManager {
-   private _game: Game;
+    private _game: Game;
     private _dangerZoneTimer: number | null = null;
     private _lastDangerSide: 'w' | 'b' = 'b';
     private _dangerSoundPlayedThisCycle = false;
     private _onDangerZoneAdded?: (position: CellPosition) => void;
-
+    private _dangerSoundAlreadyPlayed = false;
     constructor(game: Game, onDangerZoneAdded?: (position: CellPosition) => void) {
         this._game = game;
         this._onDangerZoneAdded = onDangerZoneAdded;
     }
-
     public startDangerZoneTimer(): void {
         if (this._dangerZoneTimer) clearInterval(this._dangerZoneTimer);
 
         this._dangerZoneTimer = window.setInterval(() => {
-            this._dangerSoundPlayedThisCycle = false; // Resets each main cycle
             this._lastDangerSide = this._lastDangerSide === 'w' ? 'b' : 'w';
             this.generateDangerZoneForSide(this._lastDangerSide);
-        }, 12000); // 12 seconds between danger cycles
+        }, 12000);
     }
 
     public stopDangerZoneTimer(): void {
         if (this._dangerZoneTimer) {
             clearInterval(this._dangerZoneTimer);
             this._dangerZoneTimer = null;
-        }
+        }   
     }
 
     public clearDangerZones(): void {
         this._game.clearDangerZones();
     }
- private generateDangerZoneForSide(side: 'w' | 'b'): void {
+    private generateDangerZoneForSide(side: 'w' | 'b'): void {
         const dangerZones = this._game.getDangerZones();
         const startRow = side === 'w' ? 4 : 0;
         const endRow = side === 'w' ? 7 : 3;
@@ -53,42 +51,22 @@ export class DangerZoneManager {
             }
         }
 
-        if (validPositions.length > 0) {
-            const randomIndex = Math.floor(Math.random() * validPositions.length);
-            const position = validPositions[randomIndex];
-            this._game.addDangerZone(position);
+        if (validPositions.length === 0) return;
 
-            // Notifica que uma nova zona de perigo foi adicionada
-            if (this._onDangerZoneAdded) {
-                this._onDangerZoneAdded(position);
-            }
+        const randomIndex = Math.floor(Math.random() * validPositions.length);
+        const position = validPositions[randomIndex];
+        this._game.addDangerZone(position);
 
-            // Plays sound only if not already played this cycle
-            if (!this._dangerSoundPlayedThisCycle) {
-                AudioService.play('danger');
-                this._dangerSoundPlayedThisCycle = true;
-
-                setTimeout(() => {
-                    this._dangerSoundPlayedThisCycle = false;
-                }, 100);
-            }
+        if (this._onDangerZoneAdded) {
+            this._onDangerZoneAdded(position);
         }
 
-        if (validPositions.length > 0) {
-            const randomIndex = Math.floor(Math.random() * validPositions.length);
-            const position = validPositions[randomIndex];
-            this._game.addDangerZone(position);
-
-            // Plays sound only if not already played this cycle
-            if (!this._dangerSoundPlayedThisCycle) {
-                AudioService.play('danger');
-                this._dangerSoundPlayedThisCycle = true;
-
-                // Resets after a small delay for the next cycle
-                setTimeout(() => {
-                    this._dangerSoundPlayedThisCycle = false;
-                }, 100);
-            }
+        // ✅ TOCA SOM APENAS UMA ÚNICA VEZ DURANTE TODO O JOGO
+        if (!this._dangerSoundAlreadyPlayed) {
+            this._dangerSoundAlreadyPlayed = true;
+            AudioService.play('danger');
+            console.log('[DangerZoneManager] Som danger tocado pela primeira e única vez.');
         }
     }
+
 }

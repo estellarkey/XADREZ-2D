@@ -1,7 +1,10 @@
 export class AudioService {
     private static sounds: Record<string, HTMLAudioElement> = {};
     private static basePath = '/sounds/';
-    private static activeSounds: Set<string> = new Set(); // Controla sons ativos
+    private static activeSounds: Set<string> = new Set();
+    
+    // Controle exclusivo para tocar 'danger' apenas uma vez
+    private static dangerPlayedOnce = false;
 
     public static async loadSounds(): Promise<void> {
         try {
@@ -13,60 +16,60 @@ export class AudioService {
             };
 
             for (const [name, file] of Object.entries(soundFiles)) {
-                this.sounds[name] = new Audio(`${this.basePath}${file}`);
-                this.sounds[name].volume = 0.5;
-                this.sounds[name].preload = 'auto';
-                
-                // Adiciona evento para remover do conjunto quando terminar
-                this.sounds[name].addEventListener('ended', () => {
+                const audio = new Audio(`${this.basePath}${file}`);
+                audio.volume = 0.5;
+                audio.preload = 'auto';
+
+                audio.addEventListener('ended', () => {
                     this.activeSounds.delete(name);
+                    console.log(`[AudioService] FINALIZADO: '${name}'`);
                 });
+
+                this.sounds[name] = audio;
             }
+
+            console.log('[AudioService] Sons carregados');
         } catch (error) {
             console.error("Erro ao carregar sons:", error);
         }
     }
 
     public static play(soundName: string, loop: boolean = false): void {
-        if (!this.sounds[soundName]) {
-            console.warn(`Som ${soundName} não encontrado`);
-            return;
-        }
-
-        // Se já está tocando, não toca novamente
-        if (this.activeSounds.has(soundName)) {
-            return;
-        }
-
-        try {
-            this.activeSounds.add(soundName);
-            
-            if (!loop) {
-                const clone = this.sounds[soundName].cloneNode(true) as HTMLAudioElement;
-                clone.volume = this.sounds[soundName].volume;
-                clone.loop = false;
-                
-                // Garante que será removido quando terminar
-                clone.addEventListener('ended', () => {
-                    this.activeSounds.delete(soundName);
-                });
-                
-                clone.play().catch(e => {
-                    console.error("Erro ao reproduzir som:", e);
-                    this.activeSounds.delete(soundName);
-                });
-            } else {
-                this.sounds[soundName].currentTime = 0;
-                this.sounds[soundName].loop = true;
-                this.sounds[soundName].play().catch(e => {
-                    console.error("Erro ao reproduzir som:", e);
-                    this.activeSounds.delete(soundName);
-                });
+        if (soundName === 'danger') {
+            if (this.dangerPlayedOnce) {
+                console.log(`[AudioService] BLOQUEADO: som 'danger' já foi tocado uma vez`);
+                return;
             }
-        } catch (error) {
-            console.error("Erro ao reproduzir som:", error);
-            this.activeSounds.delete(soundName);
+            this.dangerPlayedOnce = true;
         }
+
+        const audio = this.sounds[soundName];
+        if (!audio) {
+            console.warn(`Som '${soundName}' não encontrado`);
+            return;
+        }
+
+        const instance = loop ? audio : audio.cloneNode(true) as HTMLAudioElement;
+        instance.volume = audio.volume;
+        instance.loop = loop;
+        instance.currentTime = 0;
+
+        this.activeSounds.add(soundName);
+        console.log(`[AudioService] TOCANDO: '${soundName}' @ ${new Date().toISOString()}`);
+
+        if (soundName === 'danger') {
+            console.trace(`[AudioService] Stack trace para o som 'danger'`);
+        }
+
+        instance.addEventListener('ended', () => {
+            this.activeSounds.delete(soundName);
+            console.log(`[AudioService] FINALIZADO: '${soundName}'`);
+        });
+
+        instance.play().catch(err => {
+            console.error(`Erro ao tocar o som '${soundName}':`, err);
+            this.activeSounds.delete(soundName);
+        });
     }
 
     public static setVolume(volume: number): void {
