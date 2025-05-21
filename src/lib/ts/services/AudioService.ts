@@ -2,7 +2,7 @@ export class AudioService {
     private static sounds: Record<string, HTMLAudioElement> = {};
     private static basePath = '/sounds/';
     private static activeSounds: Set<string> = new Set();
-    
+
     // Controle exclusivo para tocar 'danger' apenas uma vez
     private static dangerPlayedOnce = false;
 
@@ -22,7 +22,7 @@ export class AudioService {
 
                 audio.addEventListener('ended', () => {
                     this.activeSounds.delete(name);
-                    console.log(`[AudioService] FINALIZADO: '${name}'`);
+
                 });
 
                 this.sounds[name] = audio;
@@ -37,7 +37,6 @@ export class AudioService {
     public static play(soundName: string, loop: boolean = false): void {
         if (soundName === 'danger') {
             if (this.dangerPlayedOnce) {
-                console.log(`[AudioService] BLOQUEADO: som 'danger' já foi tocado uma vez`);
                 return;
             }
             this.dangerPlayedOnce = true;
@@ -55,19 +54,14 @@ export class AudioService {
         instance.currentTime = 0;
 
         this.activeSounds.add(soundName);
-        console.log(`[AudioService] TOCANDO: '${soundName}' @ ${new Date().toISOString()}`);
-
-        if (soundName === 'danger') {
-            console.trace(`[AudioService] Stack trace para o som 'danger'`);
-        }
 
         instance.addEventListener('ended', () => {
             this.activeSounds.delete(soundName);
-            console.log(`[AudioService] FINALIZADO: '${soundName}'`);
+
         });
 
         instance.play().catch(err => {
-            console.error(`Erro ao tocar o som '${soundName}':`, err);
+
             this.activeSounds.delete(soundName);
         });
     }
