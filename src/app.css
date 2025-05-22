@@ -440,11 +440,10 @@ td svg {
     }
 }
 
-
 .robot {
     position: absolute;
-    top: 80px;
-    left: 150px;
+    top: 200px;
+    left: 300px;
     width: 200px;
     height: 220px;
     background-image: url('/assets/images/madeiraclara.jpg');
@@ -452,19 +451,21 @@ td svg {
     background-position: center;
     background-repeat: no-repeat;
     border-radius: 50% 50% 40% 40%;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 
+        0 5px 15px rgba(0, 0, 0, 0.3),
+        inset 0 -10px 20px rgba(0, 0, 0, 0.2),
+        inset 0 10px 15px rgba(255, 255, 255, 0.4);
     animation: float 3s ease-in-out infinite;
+    transform-style: preserve-3d;
+    perspective: 1000px;
 }
 
 @keyframes float {
-
-    0%,
-    100% {
-        transform: translateY(0);
+    0%, 100% {
+        transform: translateY(0) rotateX(0deg);
     }
-
     50% {
-        transform: translateY(-10px);
+        transform: translateY(-10px) rotateX(5deg);
     }
 }
 
@@ -480,11 +481,16 @@ td svg {
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    box-shadow: 
+        inset 0 -5px 10px rgba(0, 0, 0, 0.3),
+        inset 0 5px 10px rgba(255, 255, 255, 0.2);
+    transform: translateZ(10px);
 }
 
 .eyes {
     display: flex;
     gap: 40px;
+    transform: translateZ(15px);
 }
 
 .eye {
@@ -492,19 +498,17 @@ td svg {
     height: 20px;
     background-image: url('/assets/images/madeiraclara.jpg');
     border-radius: 50%;
+    box-shadow: 
+        0 2px 4px rgba(0, 0, 0, 0.3),
+        inset 0 -2px 3px rgba(0, 0, 0, 0.4);
     animation: blink 4s infinite;
 }
 
 @keyframes blink {
-
-    0%,
-    90%,
-    100% {
+    0%, 90%, 100% {
         transform: scaleY(1);
     }
-
-    93%,
-    97% {
+    93%, 97% {
         transform: scaleY(0.1);
     }
 }
@@ -515,13 +519,17 @@ td svg {
     height: 10px;
     border-radius: 10px;
     background-image: url('/assets/images/madeiraclara.jpg');
+    box-shadow: 
+        inset 0 -3px 5px rgba(0, 0, 0, 0.3),
+        inset 0 3px 5px rgba(255, 255, 255, 0.2);
+    transform: translateZ(10px);
 }
 
 .body {
     position: absolute;
     bottom: 0;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-50%) translateZ(-5px);
     width: 140px;
     height: 80px;
     background: url('/assets/images/madeira-escura.png');
@@ -530,6 +538,9 @@ td svg {
     background-repeat: no-repeat;
     border-radius: 40% / 50%;
     z-index: -1;
+    box-shadow: 
+        inset 0 -8px 15px rgba(0, 0, 0, 0.4),
+        inset 0 8px 15px rgba(255, 255, 255, 0.1);
 }
 
 .arms {
@@ -551,6 +562,9 @@ td svg {
     background-position: center;
     background-repeat: no-repeat;
     border-radius: 40%;
+    box-shadow: 
+        0 3px 6px rgba(0, 0, 0, 0.3),
+        inset 0 -5px 8px rgba(0, 0, 0, 0.4);
 }
 
 .arm.right {
@@ -558,54 +572,47 @@ td svg {
     animation: wave 2s ease-out 1;
 }
 
-@keyframes wave {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    20% {
-        transform: rotate(-30deg);
-    }
-
-    40% {
-        transform: rotate(10deg);
-    }
-
-    60% {
-        transform: rotate(-20deg);
-    }
-
-    80% {
-        transform: rotate(5deg);
-    }
-
-    100% {
-        transform: rotate(0deg);
-    }
-}
-
 .shadow {
     position: absolute;
     bottom: -20px;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-50%) rotateX(80deg);
     width: 100px;
     height: 20px;
     background: rgba(0, 0, 0, 0.2);
     border-radius: 50%;
-    filter: blur(2px);
+    filter: blur(5px);
     animation: shadowPulse 3s ease-in-out infinite;
+    opacity: 0.7;
+}
+
+@keyframes wave {
+    0% {
+        transform: rotate(0deg) translateZ(0);
+    }
+    20% {
+        transform: rotate(-30deg) translateZ(10px);
+    }
+    40% {
+        transform: rotate(10deg) translateZ(5px);
+    }
+    60% {
+        transform: rotate(-20deg) translateZ(8px);
+    }
+    80% {
+        transform: rotate(5deg) translateZ(3px);
+    }
+    100% {
+        transform: rotate(0deg) translateZ(0);
+    }
 }
 
 @keyframes shadowPulse {
-
-    0%,
-    100% {
-        transform: translateX(-50%) scale(1);
+    0%, 100% {
+        transform: translateX(-50%) rotateX(80deg) scale(1);
     }
-
     50% {
-        transform: translateX(-50%) scale(1.1);
+        transform: translateX(-50%) rotateX(80deg) scale(1.1);
     }
 }
 
@@ -613,8 +620,8 @@ td svg {
 .thought-bubble {
     position: absolute;
     top: -60px;
-    left: 200px;
-    width: 200px;
+    left: -120px;
+    width: 120px;
     padding: 15px;
     background: url('/assets/images/madeiraclara.jpg');
     border-radius: 30px;
@@ -641,8 +648,9 @@ td svg {
 }
 
 .thought-text {
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
     font-size: 14px;
-    color: #333;
+    color: #290000;
     text-align: center;
 }
 
@@ -650,7 +658,7 @@ td svg {
 .disco-container {
     position: absolute;
     left: 1100px;
-    top: 360px;
+    top: 390px;
     width: 400px;
     height: 400px;
     display: flex;
@@ -689,8 +697,8 @@ td svg {
 }
 
 .disco-centro {
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
     border-radius: 50%;
     background: url('/assets/images/madeiraclara.jpg');
     position: absolute;
@@ -736,6 +744,7 @@ td svg {
     font-size: 10px;
     margin-bottom: 5px;
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+    color: white;
 }
 
 .indicador {
@@ -789,76 +798,127 @@ td svg {
 ::-webkit-scrollbar-track {
     background-color: transparent;
 }
+/* Adicione estas regras ao final do seu CSS existente */
 
-/* Responsividade */
-@media (max-width: 768px) {
-    .chess-main-container {
-        max-height: none;
-        height: auto;
-        flex-direction: column;
+@media (max-width: 992px) {
+    /* Esconde o robô e o disco em telas médias */
+    .robot, .disco-container {
+        display: none;
     }
-
+    
+    /* Ajusta o layout principal */
+    .chess-app {
+        padding: 10px;
+    }
+    
+    .chess-main-container {
+        max-width: 100%;
+    }
+    
     .chess-content-wrapper {
         flex-direction: column;
+        gap: 10px;
+        padding: 10px;
     }
-
-    .chess-controls {
-        width: 100%;
-        order: -1;
-        padding: 15px;
-    }
-
+    
     .chess-board-area {
-        padding: 15px;
+        order: 1;
+        padding: 10px;
+        margin: 0 auto;
     }
-
+    
+    .chess-controls {
+        order: 2;
+        width: 100%;
+        padding: 10px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+    
+    .control-group {
+        width: 48%;
+        margin-bottom: 10px;
+    }
+    
+    .action-buttons {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-top: 0;
+    }
+    
+    .chess-btn {
+        width: 48%;
+        padding: 8px 10px;
+        font-size: 0.8rem;
+    }
+    
+    /* Ajusta o tamanho do tabuleiro */
     #tabuleiro td {
-        width: 45px;
-        height: 45px;
-    }
-
-    td svg {
-        transform: translate(-50%, -50%) scale(1.8);
         width: 40px;
         height: 40px;
     }
-
+    
+    td svg {
+        transform: translate(-50%, -50%) scale(1.5);
+        width: 30px;
+        height: 30px;
+    }
+    
     .vertical-coordinates {
-        height: 360px;
-        font-size: 0.8rem;
+        height: 320px;
+        font-size: 0.7rem;
     }
-
+    
     .horizontal-coordinates {
-        width: 360px;
-        font-size: 0.8rem;
+        width: 320px;
+        font-size: 0.7rem;
     }
-
-    .action-buttons {
-        flex-direction: row;
-    }
-
-    .chess-btn {
-        flex-grow: 1;
+    
+    /* Esconde a lista de movimentos em telas muito pequenas */
+    .moves-container {
+        max-width: 320px;
     }
 }
 
-@media (max-width: 480px) {
-    #tabuleiro td {
-        width: 40px;
-        height: 40px;
+@media (max-width: 576px) {
+    /* Ajustes para telas muito pequenas (celulares) */
+    .chess-controls {
+        flex-direction: column;
     }
-
-    td svg {
-        transform: translate(-50%, -50%) scale(1.6);
+    
+    .control-group {
+        width: 100%;
+    }
+    
+    .chess-btn {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+    
+    /* Tabuleiro ainda menor */
+    #tabuleiro td {
         width: 35px;
         height: 35px;
     }
-
-    .vertical-coordinates {
-        height: 320px;
+    
+    td svg {
+        transform: translate(-50%, -50%) scale(1.3);
+        width: 25px;
+        height: 25px;
     }
-
+    
+    .vertical-coordinates {
+        height: 280px;
+    }
+    
     .horizontal-coordinates {
-        width: 320px;
+        width: 280px;
+    }
+    
+    /* Esconde completamente a lista de movimentos */
+    .chess-board-area2 {
+        display: none;
     }
 }

@@ -17,7 +17,6 @@
         "Não subestime os peões!",
         "Roque para segurança do rei!",
         "A rainha é a peça mais poderosa!",
-        "Estratégia antes de tática!"
     ];
 
     // Variáveis do player de música
@@ -242,6 +241,10 @@
         }
     });
 </script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 <!--contoles do chess-->
 <div class="chess-app">
     <div class="chess-main-container">
@@ -331,24 +334,22 @@
 
 <div class="robot">
     <div class="thought-bubble">
-   <div class="thought-text" bind:this={thoughtText}>Cuidado com a zona de perigo!</div>
+        <div class="thought-text" bind:this={thoughtText}>Cuidado com a zona de perigo!</div>
     </div>
     <div class="face">
-      <div class="eyes">
-        <div class="eye"></div>
-        <div class="eye"></div>
-      </div>
-      <div class="mouth"></div>
+        <div class="eyes">
+            <div class="eye"></div>
+            <div class="eye"></div>
+        </div>
+        <div class="mouth"></div>
     </div>
     <div class="arms">
-      <div class="arm left"></div>
-      <div class="arm right"></div>
+        <div class="arm left"></div>
+        <div class="arm right"></div>
     </div>
     <div class="body"></div>
     <div class="shadow"></div>
-  </div>
-
-
+</div>
 <!--Disco-->
 
  <div class="disco-container">
