@@ -94,6 +94,27 @@ export class Game {
         this.removePieceAt(position);
     }
 
+      public isCheckmate(): boolean {
+        return this.chess.isCheckmate();
+    }
+
+    public isSquareDefended(i: number, j: number, color: PlayerColor): boolean {
+    // Loop through all pieces of the given color
+    for (let x = 0; x < 8; x++) {
+        for (let y = 0; y < 8; y++) {
+            const piece = this.getPiece(x, y);
+            if (piece && piece.color === color) {
+                // Use the correct method to get valid moves
+                const moves = this.getValidMoves(x, y);
+                // If any move attacks (i, j), the square is defended
+                if (moves.some(move => move.i === i && move.j === j)) {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
+}
 
     public getDangerZones(): DangerZone[] {
         return [...this._dangerZones];

@@ -33,3 +33,14 @@ export interface GameSettings {
     playerColor?: PlayerColor;
     roomId?: string;
 }
+
+export interface EvaluatedMove {
+    move: any;
+    score: number;
+    depth?: number;
+}
+
+export interface SearchResult {
+    bestMove: any;
+    score: number;
+}

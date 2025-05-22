@@ -17,7 +17,7 @@ export class AudioService {
 
             for (const [name, file] of Object.entries(soundFiles)) {
                 const audio = new Audio(`${this.basePath}${file}`);
-                audio.volume = 0.5;
+                audio.volume = 1;
                 audio.preload = 'auto';
 
                 audio.addEventListener('ended', () => {
