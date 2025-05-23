@@ -1,6 +1,6 @@
 export type GameMode = 'singleplayer';
 export type PlayerColor = 'w' | 'b';
-export type GameResult = 'Branco' | 'Preto' | 'Empate' | false;
+export type GameResult = 'Brancas' | 'Pretas' | 'Empate' | false;
 export type PieceType = 'k' | 'q' | 'r' | 'b' | 'n' | 'p';
 
 // Em ChessTypes.ts

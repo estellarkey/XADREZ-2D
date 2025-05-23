@@ -1,13 +1,11 @@
-<script>
+<script lang="ts">
     import { onMount } from "svelte";
     import { browser } from "$app/environment";
 
     // Variáveis do jogo de xadrez
-    // @ts-ignore
     let gameController;
-    // @ts-ignore
-    let thoughtText;
-    
+    let thoughtText: HTMLDivElement;
+
     const chessThoughts = [
         "Cuidado com a zona de perigo!",
         "O bispo domina a diagonal!",
@@ -23,161 +21,160 @@
     const musicas = [
         {
             titulo: "Elementos do Fogo e Água",
-            src: "./music/Lauv - Steal The Show (From ＂Elemental＂).mp3"
+            src: "./music/Lauv - Steal The Show (From ＂Elemental＂).mp3",
         },
         {
             titulo: "God is Good",
-            src: "./music/Forrest Frank - GOD IS GOOD (Official Lyric Video).mp3"
+            src: "./music/Forrest Frank - GOD IS GOOD (Official Lyric Video).mp3",
         },
         {
             titulo: "Free mind",
-            src: "./music/Tems - Free Mind.mp3"
+            src: "./music/Tems - Free Mind.mp3",
         },
         {
             titulo: "Nós Dois - Pedro Valença",
-            src: "./music/Pedro Valença - Nós Dois (Vídeo Oficial).mp3"
+            src: "./music/Pedro Valença - Nós Dois (Vídeo Oficial).mp3",
         },
         {
             titulo: "Best Part",
-            src: "./music/Daniel Caesar & H.E.R. - Best Part, a Visual.mp3"
-        }
+            src: "./music/Daniel Caesar & H.E.R. - Best Part, a Visual.mp3",
+        },
     ];
-    
+
     let musicaAtual = 0;
     let isDragging = false;
     let startAngle = 0;
     let currentRotation = 0;
     let lastAngle = 0;
-    // @ts-ignore
     let rotationVelocity = 0;
     let lastTimestamp = 0;
-    // @ts-ignore
-    let autoRotationInterval;
+    let autoRotationInterval: string | number | NodeJS.Timeout | undefined;
     let isPlaying = false;
-    // @ts-ignore
     let totalRotation = 0;
     let rotationSinceLastChange = 0;
-    // @ts-ignore
-    let player;
-    // @ts-ignore
-    let disco;
-    // @ts-ignore
-    let musicaTitulo;
+    let player: HTMLAudioElement | null;
+    let disco: HTMLElement;
+    let musicaTitulo: HTMLElement | null;
 
     // Funções do player de música
     function carregarMusica() {
-        // @ts-ignore
-        player.src = musicas[musicaAtual].src;
-        // @ts-ignore
-        musicaTitulo.textContent = musicas[musicaAtual].titulo;
-        // @ts-ignore
-        player.play().then(() => {
-            isPlaying = true;
-            iniciarRotacaoAutomatica();
-        // @ts-ignore
-        }).catch(e => console.log("Autoplay prevented:", e));
+        if (player && musicaTitulo) {
+            player.src = musicas[musicaAtual].src;
+            musicaTitulo.textContent = musicas[musicaAtual].titulo;
+            player
+                .play()
+                .then(() => {
+                    isPlaying = true;
+                    iniciarRotacaoAutomatica();
+                })
+                .catch((e) => console.log("Autoplay prevented:", e));
+        }
     }
-    
+
     function proximaMusica() {
         musicaAtual = (musicaAtual + 1) % musicas.length;
         carregarMusica();
         currentRotation += 72;
-        // @ts-ignore
-        disco.style.transform = `rotate(${currentRotation}deg)`;
+
+        if (disco) {
+            disco.style.transform = `rotate(${currentRotation}deg)`;
+        }
+
         rotationSinceLastChange = 0;
     }
-    
+
     function musicaAnterior() {
         musicaAtual = (musicaAtual - 1 + musicas.length) % musicas.length;
         carregarMusica();
         currentRotation -= 72;
-        // @ts-ignore
         disco.style.transform = `rotate(${currentRotation}deg)`;
         rotationSinceLastChange = 0;
     }
-    
+
     function togglePlayPause() {
         if (isPlaying) {
-            // @ts-ignore
-            player.pause();
-            // @ts-ignore
+            if (player) {
+                player.pause();
+            }
             clearInterval(autoRotationInterval);
         } else {
-            // @ts-ignore
-            player.play();
+            if (player) {
+                player.play();
+            }
             iniciarRotacaoAutomatica();
         }
         isPlaying = !isPlaying;
     }
-    
+
     function iniciarRotacaoAutomatica() {
-        // @ts-ignore
         clearInterval(autoRotationInterval);
         autoRotationInterval = setInterval(() => {
             if (!isDragging && isPlaying) {
                 currentRotation += 0.3;
-                // @ts-ignore
                 disco.style.transform = `rotate(${currentRotation}deg)`;
             }
         }, 30);
     }
-    
+
     function setupPlayer() {
         if (!browser) return;
-        
-        disco = document.getElementById('disco');
-        player = document.getElementById('player');
-        musicaTitulo = document.getElementById('musica-titulo');
-        
+
+        disco = document.getElementById("disco") as HTMLElement;
+        player = document.getElementById("player") as HTMLAudioElement;
+        musicaTitulo = document.getElementById("musica-titulo");
+
         // Event listeners do player
-        // @ts-ignore
-        disco.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            // @ts-ignore
+        if (disco) {
+            disco.addEventListener("mousedown", (e) => {
+                isDragging = true;
+                const rect = disco.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                startAngle =
+                    (Math.atan2(e.clientY - centerY, e.clientX - centerX) *
+                        180) /
+                    Math.PI;
+                lastAngle = startAngle;
+                lastTimestamp = performance.now();
+                rotationSinceLastChange = 0;
+                e.preventDefault();
+            });
+        }
+
+        document.addEventListener("mousemove", (e) => {
+            if (!isDragging || !disco) return;
+
             const rect = disco.getBoundingClientRect();
             const centerX = rect.left + rect.width / 2;
             const centerY = rect.top + rect.height / 2;
-            startAngle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * 180 / Math.PI;
-            lastAngle = startAngle;
-            lastTimestamp = performance.now();
-            rotationSinceLastChange = 0;
-            e.preventDefault();
-        });
-        
-        document.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            
-            // @ts-ignore
-            const rect = disco.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top + rect.height / 2;
-            const angle = Math.atan2(e.clientY - centerY, e.clientX - centerX) * 180 / Math.PI;
-            
+            const angle =
+                (Math.atan2(e.clientY - centerY, e.clientX - centerX) * 180) /
+                Math.PI;
+
             const deltaAngle = angle - lastAngle;
-            
+
             if (deltaAngle > 180) {
                 lastAngle += 360;
             } else if (deltaAngle < -180) {
                 lastAngle -= 360;
             }
-            
+
             const now = performance.now();
             const deltaTime = now - lastTimestamp;
-            
+
             if (deltaTime > 0) {
                 rotationVelocity = (angle - lastAngle) / deltaTime;
                 lastAngle = angle;
                 lastTimestamp = now;
             }
-            
+
             const rotationDelta = angle - startAngle;
             currentRotation += rotationDelta;
             rotationSinceLastChange += rotationDelta;
             startAngle = angle;
-            
-            // @ts-ignore
+
             disco.style.transform = `rotate(${currentRotation}deg)`;
-            
+
             if (Math.abs(rotationSinceLastChange) > 60) {
                 if (rotationSinceLastChange > 0) {
                     proximaMusica();
@@ -186,33 +183,34 @@
                 }
             }
         });
-        
-        // @ts-ignore
-        document.addEventListener('mouseup', (e) => {
+
+        document.addEventListener("mouseup", (e) => {
             if (!isDragging) return;
             isDragging = false;
-            
+
             if (Math.abs(rotationSinceLastChange) <= 60 && !isPlaying) {
                 togglePlayPause();
             }
-            
+
             if (isPlaying) {
                 iniciarRotacaoAutomatica();
             }
         });
-        
-        // @ts-ignore
-        disco.addEventListener('click', (e) => {
-            if (!isDragging || Math.abs(rotationSinceLastChange) < 5) {
-                togglePlayPause();
-            }
-        });
-        
-        // @ts-ignore
-        player.addEventListener('ended', () => {
-            proximaMusica();
-        });
-        
+
+        if (disco) {
+            disco.addEventListener("click", (e) => {
+                if (!isDragging || Math.abs(rotationSinceLastChange) < 5) {
+                    togglePlayPause();
+                }
+            });
+        }
+
+        if (player) {
+            player.addEventListener("ended", () => {
+                proximaMusica();
+            });
+        }
+
         // Inicia a primeira música
         carregarMusica();
     }
@@ -220,7 +218,6 @@
     // Funções do jogo de xadrez
     function changeThought() {
         const randomIndex = Math.floor(Math.random() * chessThoughts.length);
-        // @ts-ignore
         if (thoughtText) {
             thoughtText.textContent = chessThoughts[randomIndex];
         }
@@ -232,19 +229,26 @@
             // Inicializa o jogo de xadrez
             const module = await import("$lib/ts/controllers/GameController");
             gameController = new module.GameController();
-            
+
             // Inicia o ciclo de mudança de pensamento
             setTimeout(changeThought, 8000);
-            
+
             // Inicializa o player de música
             setupPlayer();
         }
     });
 </script>
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"
+/>
+<!-- Font Awesome -->
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+/>
 <!--contoles do chess-->
 <div class="chess-app">
     <div class="chess-main-container">
@@ -264,16 +268,11 @@
                 </div>
                 <!-- Tabuleiro com coordenadas -->
                 <div class="board-with-coordinates">
-                    <div class="vertical-coordinates">
-                        <div>8</div>
-                        <div>7</div>
-                        <div>6</div>
-                        <div>5</div>
-                        <div>4</div>
-                        <div>3</div>
-                        <div>2</div>
-                        <div>1</div>
-                    </div>
+                <div class="vertical-coordinates">
+                {#each Array.from({ length: 8 }, (_, i) => 8 - i) as number}
+                    <div>{number}</div>
+                {/each}
+                </div>
 
                     <div class="board-wrapper">
                         <div id="tabuleiro-container"></div>
@@ -323,18 +322,18 @@
                         <i class="fas fa-redo"></i> Reiniciar
                     </button>
                 </div>
-
             </div>
         </div>
     </div>
 </div>
 
-
 <!--robô-->
 
 <div class="robot">
     <div class="thought-bubble">
-        <div class="thought-text" bind:this={thoughtText}>Cuidado com a zona de perigo!</div>
+        <div class="thought-text" bind:this={thoughtText}>
+            Cuidado com a zona de perigo!
+        </div>
     </div>
     <div class="face">
         <div class="eyes">
@@ -352,16 +351,14 @@
 </div>
 <!--Disco-->
 
- <div class="disco-container">
-        <div class="indicador"></div>
-        <div class="disco" id="disco">
-            <div class="disco-centro"></div>
-           
-          
-        </div>
-        <div class="info">
-            <div class="titulo" id="musica-titulo">Elementos do Fogo e Água</div>
-        </div>
+<div class="disco-container">
+    <div class="indicador"></div>
+    <div class="disco" id="disco">
+        <div class="disco-centro"></div>
     </div>
+    <div class="info">
+        <div class="titulo" id="musica-titulo">Elementos do Fogo e Água</div>
+    </div>
+</div>
 
-    <audio id="player" loop></audio>
+<audio id="player" loop></audio>

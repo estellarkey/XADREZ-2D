@@ -238,12 +238,12 @@ export class Game {
     public checkGameResult(): GameResult {
     // 1. Verifica se houve vitória por zona de perigo
     if (this._winner) {
-        return this._winner === 'w' ? 'Branco' : 'Preto';
+        return this._winner === 'w' ? 'Brancas' : 'Pretas';
     }
 
     // 2. Verifica regras normais de xadrez
     if (this.chess.isCheckmate()) {
-        return this.chess.turn() === 'w' ? 'Preto' : 'Branco';
+        return this.chess.turn() === 'w' ? 'Pretas' : 'Brancas';
     } else if (this.chess.isDraw()) {
         return 'Empate';
     }

@@ -9,6 +9,9 @@ import { UIController } from './UIController';
 import { AudioService } from '../services/AudioService';
 import { DangerZoneManager } from '../services/DangerZoneManager';
 
+
+
+
 export class GameController implements IGameController {
     private _game: Game;
     public _moveHistory: MoveHistory;
@@ -27,7 +30,7 @@ export class GameController implements IGameController {
     constructor() {
         this._game = new Game();
         this._game.setKingCaughtCallback((winner) => {
-            const result = winner === 'w' ? 'Branco' : 'Preto';
+            const result = winner === 'w' ? 'Brancas' : 'Pretas';
             this._uiController.showGameResult(result);
         });
         this._moveHistory = new MoveHistory();
@@ -236,13 +239,6 @@ export class GameController implements IGameController {
     public get gameMode(): GameMode { return this._gameMode; }
     public get playerColor(): PlayerColor { return this._playerColor; }
     public set playerColor(color: PlayerColor) { this._playerColor = color; }
-}
-
-if (typeof document !== 'undefined') {
-    document.addEventListener('DOMContentLoaded', () => {
-        const gameController = new GameController();
-        (window as any).gameController = gameController;
-    });
 }
 
 declare global {
